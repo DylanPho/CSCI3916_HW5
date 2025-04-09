@@ -87,6 +87,37 @@ router.post('/signin', function (req, res) {
     })
 });
 
+router.post('/movies', authJwtController.isAuthenticated, function (req, res) {
+    var movie = new Movie(req.body);
+    movie.save(function (err, result) {
+        if (err) res.status(400).json({ success: false, message: err });
+        else res.status(201).json({ success: true, message: 'Movie saved!', movie: result });
+    });
+});
+
+router.get('/movies', authJwtController.isAuthenticated, function (req, res) {
+    Movie.find(function (err, movies) {
+        if (err) res.status(400).json({ success: false, message: err });
+        else res.status(200).json(movies);
+    });
+});
+
+router.post('/reviews', authJwtController.isAuthenticated, function (req, res) {
+    var review = new Review(req.body);
+    review.save(function (err, result) {
+        if (err) res.status(400).json({ success: false, message: err });
+        else res.status(201).json({ success: true, message: 'Review created!', review: result });
+    });
+});
+
+router.get('/reviews/:movieId', function (req, res) {
+    Review.find({ movieId: req.params.movieId }, function (err, reviews) {
+        if (err) res.status(500).json({ success: false, message: err });
+        else res.status(200).json(reviews);
+    });
+});
+
+
 app.use('/', router);
 app.listen(process.env.PORT || 8080);
 module.exports = app; // for testing only
