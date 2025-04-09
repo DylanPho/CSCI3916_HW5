@@ -96,10 +96,28 @@ router.post('/movies', authJwtController.isAuthenticated, function (req, res) {
 });
 
 router.get('/movies', authJwtController.isAuthenticated, function (req, res) {
-    Movie.find(function (err, movies) {
-        if (err) res.status(400).json({ success: false, message: err });
-        else res.status(200).json(movies);
-    });
+    if (req.query.reviews === 'true') {
+        // Join movies with reviews
+        Movie.aggregate([
+            {
+                $lookup: {
+                    from: 'reviews',             // MongoDB collection name (lowercase)
+                    localField: '_id',           // Movie's _id
+                    foreignField: 'movieId',     // Review's movieId
+                    as: 'reviews'                // output array
+                }
+            }
+        ]).exec(function (err, results) {
+            if (err) res.status(500).json({ success: false, message: err });
+            else res.status(200).json({ success: true, data: results });
+        });
+    } else {
+        // Default: return all movies
+        Movie.find(function (err, movies) {
+            if (err) res.status(400).json({ success: false, message: err });
+            else res.status(200).json({ success: true, data: movies });
+        });
+    }
 });
 
 router.post('/reviews', authJwtController.isAuthenticated, function (req, res) {
