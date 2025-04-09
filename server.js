@@ -121,6 +121,36 @@ router.get('/movies', authJwtController.isAuthenticated, function (req, res) {
     }
 });
 
+router.get('/movies/:title', authJwtController.isAuthenticated, function (req, res) {
+    const title = req.params.title;
+
+    if (req.query.reviews === 'true') {
+        // Return movie + reviews (aggregation)
+        Movie.aggregate([
+            { $match: { title: title } },
+            {
+                $lookup: {
+                    from: 'reviews', // collection name
+                    localField: '_id',
+                    foreignField: 'movieId',
+                    as: 'reviews'
+                }
+            }
+        ]).exec(function (err, result) {
+            if (err) res.status(500).json({ success: false, message: err });
+            else if (!result || result.length === 0) res.status(404).json({ success: false, message: 'Movie not found' });
+            else res.status(200).json({ success: true, data: result[0] });
+        });
+    } else {
+        // Return movie only (no reviews)
+        Movie.findOne({ title: title }, function (err, movie) {
+            if (err) res.status(500).json({ success: false, message: err });
+            else if (!movie) res.status(404).json({ success: false, message: 'Movie not found' });
+            else res.status(200).json({ success: true, data: movie });
+        });
+    }
+});
+
 router.post('/reviews', authJwtController.isAuthenticated, function (req, res) {
     var review = new Review(req.body);
     review.save(function (err, result) {
