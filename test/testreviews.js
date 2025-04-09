@@ -61,7 +61,7 @@ describe('Test Review Routes', () => {
               .post('/signup')
               .send(login_details)
               .end((err, res) =>{
-                res.should.have.status(200);
+                res.should.have.status(201);
                 res.body.success.should.be.eql(true);
                 //follow-up to get the JWT token
                 chai.request(server)
