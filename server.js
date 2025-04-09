@@ -151,6 +151,21 @@ router.get('/movies/:title', authJwtController.isAuthenticated, function (req, r
     }
 });
 
+router.put('/movies/:title', authJwtController.isAuthenticated, function (req, res) {
+    const title = req.params.title;
+    const updatedData = req.body;
+
+    Movie.findOneAndUpdate({ title: title }, updatedData, { new: true }, function (err, updatedMovie) {
+        if (err) {
+            res.status(500).json({ success: false, message: err });
+        } else if (!updatedMovie) {
+            res.status(404).json({ success: false, message: 'Movie not found' });
+        } else {
+            res.status(200).json({ success: true, message: 'Movie updated', movie: updatedMovie });
+        }
+    });
+});
+
 router.post('/reviews', authJwtController.isAuthenticated, function (req, res) {
     var review = new Review(req.body);
     review.save(function (err, result) {
