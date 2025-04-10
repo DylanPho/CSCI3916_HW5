@@ -4,6 +4,8 @@ File: Server.js
 Description: Web API scaffolding for Movie API
  */
 
+const { trackReviewEvent } = require('./utils/analytics');
+
 var express = require('express');
 var bodyParser = require('body-parser');
 var passport = require('passport');
@@ -180,12 +182,25 @@ router.delete('/movies/:title', authJwtController.isAuthenticated, function (req
     });
 });
 
-router.post('/reviews', authJwtController.isAuthenticated, function (req, res) {
-    var review = new Review(req.body);
-    review.save(function (err, result) {
-        if (err) res.status(400).json({ success: false, message: err });
-        else res.status(201).json({ success: true, message: 'Review created!', review: result });
-    });
+router.post('/reviews', authJwtController.isAuthenticated, async function (req, res) {
+    try {
+        const review = new Review(req.body);
+        const savedReview = await review.save();
+
+        // Extra Credit: Track review creation in GA
+        const movie = await Movie.findById(review.movieId);
+        if (movie) {
+            await trackReviewEvent(movie.title);
+        }
+
+        res.status(201).json({
+            success: true,
+            message: 'Review created!',
+            review: savedReview
+        });
+    } catch (err) {
+        res.status(400).json({ success: false, message: err.message });
+    }
 });
 
 router.get('/reviews/:movieId', function (req, res) {
