@@ -1,7 +1,7 @@
 {
-  "name": "CSCI3916_HW4",
+  "name": "CSCI3916_HW5",
   "version": "1.0.0",
-  "description": "Web API 3916 Homework 4",
+  "description": "Web API 3916 Homework 5",
   "main": "server.js",
   "scripts": {
     "test": "mocha --timeout 10000 --exit"
