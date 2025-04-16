@@ -23,8 +23,12 @@ const MovieSchema = new mongoose.Schema({
         characterName: String
       }],
       required: [true, 'Actors field is required']
+    },
+    imageUrl: {
+      type: String,
+      required: false // can set to true if mandatory
     }
-  });
+});
 
 // return the model
 module.exports = mongoose.model('Movie', MovieSchema);
