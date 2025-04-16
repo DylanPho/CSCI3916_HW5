@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shawnmccarthy/CSC3916_HW3.git"
+    "url": "https://github.com/DylanPho/CSCI3916_HW5.git"
   },
   "keywords": [
     "Movie"
@@ -16,9 +16,9 @@
   "author": "Dylan Phoutthavong",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shawnmccarthy/CSC3916_HW3/issues"
+    "url": "https://github.com/DylanPho/CSCI3916_HW5/issues"
   },
-  "homepage": "https://github.com/shawnmccarthy/CSC3916_HW3#readme",
+  "homepage": "https://github.com/DylanPho/CSCI3916_HW5#readme",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.20.3",
@@ -32,6 +32,7 @@
     "passport": "^0.6.0",
     "passport-http": "^0.3.0",
     "passport-jwt": "^4.0.0",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6"
   },
   "devDependencies": {
