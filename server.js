@@ -4,6 +4,8 @@ File: Server.js
 Description: Web API scaffolding for Movie API
  */
 
+require('dotenv').config();
+
 const { trackReviewEvent } = require('./utils/analytics');
 
 var express = require('express');
