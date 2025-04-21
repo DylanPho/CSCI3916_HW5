@@ -53,17 +53,26 @@ router.post('/signup', async function (req, res) {
 // SIGNIN
 router.post('/signin', function (req, res) {
   const userNew = new User(req.body);
+
   User.findOne({ username: userNew.username }).select('name username password').exec(function (err, user) {
-    if (err) return res.status(500).send(err);
-    if (!user) return res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
+    if (err) return res.status(500).json({ success: false, message: err.message });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Authentication failed. User not found.' });
+    }
 
     user.comparePassword(userNew.password, function (isMatch) {
       if (isMatch) {
         const userToken = { id: user.id, username: user.username };
         const token = require('jsonwebtoken').sign(userToken, process.env.SECRET_KEY);
-        res.json({ success: true, token: 'JWT ' + token });
+
+        return res.status(200).json({
+          success: true,
+          message: 'Authentication successful',
+          token: 'JWT ' + token
+        });
       } else {
-        res.status(401).send({ success: false, msg: 'Authentication failed. Wrong password.' });
+        return res.status(401).json({ success: false, message: 'Authentication failed. Wrong password.' });
       }
     });
   });
@@ -171,7 +180,11 @@ router.get('/reviews/:movieId', authJwtController.isAuthenticated, function (req
 // POST a review
 router.post('/reviews', authJwtController.isAuthenticated, async function (req, res) {
   try {
-    const review = new Review(req.body);
+    const username = req.user.username; // extracted from JWT
+    const review = new Review({
+      ...req.body,
+      username: username
+    });
     const savedReview = await review.save();
     res.status(201).json({ success: true, message: 'Review created!', review: savedReview });
   } catch (err) {
