@@ -194,7 +194,7 @@ router.post('/reviews', authJwtController.isAuthenticated, async function (req, 
 
 // PUT update a review by ID
 router.post('/movies/search', authJwtController.isAuthenticated, async function (req, res) {
-  const { title, actorName } = req.body;
+  const { title, actors } = req.body;
 
   try {
     let query = {};
@@ -203,8 +203,8 @@ router.post('/movies/search', authJwtController.isAuthenticated, async function 
       query.title = { $regex: title, $options: 'i' }; // case-insensitive match
     }
 
-    if (actorName) {
-      query['actors.actorName'] = { $regex: actorName, $options: 'i' };
+    if (actors) {
+      query['actors.actors'] = { $regex: actors, $options: 'i' };
     }
 
     const results = await Movie.find(query);
