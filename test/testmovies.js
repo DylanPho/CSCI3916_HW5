@@ -53,14 +53,14 @@ describe('Test Movie Routes', () => {
               .post('/signup')
               .send(login_details)
               .end((err, res) =>{
-                res.should.have.status(200);
+                res.should.have.status(201);
                 res.body.success.should.be.eql(true);
                 //follow-up to get the JWT token
                 chai.request(server)
                     .post('/signin')
                     .send(login_details)
                     .end((err, res) => {
-                        res.should.have.status(200);
+                        res.should.have.status(201);
                         res.body.should.have.property('token');
                         token = res.body.token;
                         done();
@@ -77,7 +77,7 @@ describe('Test Movie Routes', () => {
                 .set('Authorization', token)
                 .send(movie_details)
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     done();
                 })
         })
@@ -91,7 +91,7 @@ describe('Test Movie Routes', () => {
                 .set('Authorization', token)
                 .send()
                 .end((err, res) => {
-                    res.should.have.status(200);
+                    res.should.have.status(201);
                     res.body.should.be.an('array');
                     res.body.forEach(movie => {
                         movie.should.have.property('title')

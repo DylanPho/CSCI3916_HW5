@@ -38,14 +38,14 @@ describe('Register, Login User', () => {
               .post('/signup')
               .send(login_details)
               .end((err, res) =>{
-                res.should.have.status(200);
+                res.should.have.status(201);
                 res.body.success.should.be.eql(true);
                 //follow-up to get the JWT token
                 chai.request(server)
                     .post('/signin')
                     .send(login_details)
                     .end((err, res) => {
-                        res.should.have.status(200);
+                        res.should.have.status(201);
                         res.body.should.have.property('token');
                         let token = res.body.token;
                         done();
