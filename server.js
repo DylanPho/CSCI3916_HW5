@@ -192,6 +192,29 @@ router.post('/reviews', authJwtController.isAuthenticated, async function (req, 
   }
 });
 
+// PUT update a review by ID
+router.post('/movies/search', authJwtController.isAuthenticated, async function (req, res) {
+  const { title, actorName } = req.body;
+
+  try {
+    let query = {};
+
+    if (title) {
+      query.title = { $regex: title, $options: 'i' }; // case-insensitive match
+    }
+
+    if (actorName) {
+      query['actors.actorName'] = { $regex: actorName, $options: 'i' };
+    }
+
+    const results = await Movie.find(query);
+    res.status(200).json({ success: true, data: results });
+
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
 // Mount router
 app.use('/', router);
 
